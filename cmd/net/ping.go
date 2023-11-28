@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package net
 
 import (
@@ -19,6 +16,7 @@ var (
 	}
 )
 
+// ====== helpers
 func ping(domain string) (int, error) {
 	url := "http://" + domain
 	req, err := http.NewRequest("HEAD", url, nil)
@@ -34,12 +32,12 @@ func ping(domain string) (int, error) {
 	return resp.StatusCode, nil
 }
 
+// ====== handlers
 var pingCmd = &cobra.Command{
 	Use:   "ping",
 	Short: "This pings a remote url",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		// ====== ping command
 		if resp, err := ping(urlPath); err != nil {
 			fmt.Println(err)
 		} else {
@@ -50,7 +48,7 @@ var pingCmd = &cobra.Command{
 
 func init() {
 	// Add flags
-	pingCmd.Flags().StringVarP(&urlPath, "url", "u", "", "The url to ping")
+	pingCmd.Flags().StringVarP(&urlPath, "url", "u", "", "The url to ping") // default is empty string
 
 	// Assert required flags
 	if err := pingCmd.MarkFlagRequired("url"); err != nil {

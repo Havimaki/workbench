@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -30,28 +27,9 @@ func Execute() {
 	}
 }
 
-func setDefaults() {
+// ====== helpers
+func setEnvDefaults() {
 	viper.SetDefault("cmd.info.diskUsage.directory", ".")
-}
-
-func init() {
-	cobra.OnInitialize(initConfig)
-
-	// Custom subcommands
-	addSubcommandPalettes()
-
-	// Set default env vars
-	setDefaults()
-	err := viper.WriteConfigAs("workbench.backup.yaml")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.workbench.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func addSubcommandPalettes() {
@@ -59,8 +37,7 @@ func addSubcommandPalettes() {
 	rootCmd.AddCommand(info.InfoCmd)
 }
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
+func setConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -75,10 +52,30 @@ func initConfig() {
 		viper.SetConfigName(".workbench")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	// Checks if environment variables match any of the existing keys from
+	// the config file, defaults or flags. If matching env vars are found,
+	// they are loaded into Viper.
+	viper.AutomaticEnv()
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+// ====== handler
+func init() {
+	cobra.OnInitialize(setConfig)
+
+	// Custom setup configs
+	addSubcommandPalettes()
+	setEnvDefaults()
+
+	// Backup config file
+	if err := viper.WriteConfigAs("workbench.default.yaml"); err != nil {
+		fmt.Println(err)
+	}
+
+	// Global flags
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.workbench.yaml)")
 }

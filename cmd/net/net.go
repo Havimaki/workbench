@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package net
 
 import (
@@ -9,7 +6,7 @@ import (
 
 var NetCmd = &cobra.Command{
 	Use:   "net",
-	Short: "Net is a palette that contains network based commands",
+	Short: "All network-based commands",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

@@ -6,7 +6,7 @@ import (
 
 var InfoCmd = &cobra.Command{
 	Use:   "info",
-	Short: "All things information",
+	Short: "All information-based commands",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
